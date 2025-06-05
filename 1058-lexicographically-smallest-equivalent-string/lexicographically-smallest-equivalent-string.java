@@ -1,46 +1,47 @@
 class Solution {
+    static int parent[];
+    public static int find(int val)
+    {
+        if(parent[val]!=val)
+        {
+            parent[val]=find(parent[val]);
+            
+        }
+        return parent[val];
+    }
+    public static void union(int a,int b)
+    {
+        int leta=find(a);
+        int letb=find(b);
+
+        if(leta<letb)
+        {
+            parent[letb]=leta;
+        }
+        else
+        {
+            parent[leta]=letb;
+        }
+    }
     public String smallestEquivalentString(String s1, String s2, String baseStr) {
-        int[] parent = new int[26];
-
-        // Initialize parent of each character to itself
-        for (int i = 0; i < 26; i++) {
-            parent[i] = i;
+        int n=baseStr.length();
+        parent=new int[26];
+        for(int i=0;i<26;i++)
+        {
+            parent[i]=i;
         }
 
-        // Find operation with path compression
-        for (int i = 0; i < s1.length(); i++) {
-            int a = s1.charAt(i) - 'a';
-            int b = s2.charAt(i) - 'a';
-            union(a, b, parent);
+        for(int i=0;i<s1.length();i++)
+        {
+            union(s1.charAt(i)-'a',s2.charAt(i)-'a');
         }
 
-        // Build the result string using the representative of each character
-        StringBuilder result = new StringBuilder();
-        for (char c : baseStr.toCharArray()) {
-            int root = find(c - 'a', parent);
-            result.append((char) (root + 'a'));
+        StringBuilder res = new StringBuilder();
+        for(int i=0;i<n;i++)
+        {
+            char chh=baseStr.charAt(i);
+            res.append((char)(find(chh-'a')+'a'));
         }
-
-        return result.toString();
-    }
-
-    private int find(int x, int[] parent) {
-        if (x != parent[x]) {
-            parent[x] = find(parent[x], parent);
-        }
-        return parent[x];
-    }
-
-    private void union(int x, int y, int[] parent) {
-        int rootX = find(x, parent);
-        int rootY = find(y, parent);
-        if (rootX == rootY) return;
-
-        // Always attach larger to smaller to keep lexicographical order
-        if (rootX < rootY) {
-            parent[rootY] = rootX;
-        } else {
-            parent[rootX] = rootY;
-        }
+        return res.toString();
     }
 }
